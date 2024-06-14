@@ -85,6 +85,7 @@ void testPerformance(const dim3 gridSize, const dim3 threadsPerBlock, const int 
         a[i] = i + 1;
         b[i] = (i + 1) * 2;
       }
+
       std::cout << "Time taken on cpu: ";
       MEASURE_EXEC_TIME(add1DOnCpu(a.data(), b.data(), c.data(), N));
       cpuRes = std::accumulate(c.begin(), c.end(), 0);
@@ -94,7 +95,6 @@ void testPerformance(const dim3 gridSize, const dim3 threadsPerBlock, const int 
     {
       std::vector<T> a(N), b(N), c(N);
       const size_t bytes = sizeof(T) * N;
-
       for (int i = 0; i < N; i++) {
         a[i] = i + 1;
         b[i] = (i + 1) * 2;
@@ -128,7 +128,6 @@ void testPerformance(const dim3 gridSize, const dim3 threadsPerBlock, const int 
       std::vector<T> a(N * N);
       std::vector<T> b(N * N);
       std::vector<T> c(N * N);
-
       for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
           a[i * N + j] = i * N + j; 
@@ -138,18 +137,13 @@ void testPerformance(const dim3 gridSize, const dim3 threadsPerBlock, const int 
 
       std::cout << "Time taken on cpu: ";
       MEASURE_EXEC_TIME(add2DOnCpu(a.data(), b.data(), c.data(), N, N));
-      add2DOnCpu(a.data(), b.data(), c.data(), N, N);
-
       cpuRes = std::accumulate(c.begin(), c.end(), 0);
     }
 
     // on cuda
     {
-      std::vector<T> a(N * N);
-      std::vector<T> b(N * N);
-      std::vector<T> c(N * N);
+      std::vector<T> a(N * N), b(N * N), c(N * N);
       const size_t bytes = sizeof(T) * N * N;
-
       for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
           a[i * N + j] = i * N + j;
@@ -170,7 +164,6 @@ void testPerformance(const dim3 gridSize, const dim3 threadsPerBlock, const int 
       std::cout << '\n';
 
       cudaMemcpy(c.data(), dc, bytes, cudaMemcpyKind::cudaMemcpyDeviceToHost);
-      
       cudaRes = std::accumulate(c.begin(), c.end(), 0);
 
       cudaFree(da);
